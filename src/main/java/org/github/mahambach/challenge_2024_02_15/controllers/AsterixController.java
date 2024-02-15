@@ -17,15 +17,21 @@ public class AsterixController {
     public List<AsterixCharacter> getAsterix() {
         return repo.findAll();
     }
-    @GetMapping("/search")
-    public List<AsterixCharacter> getAsterixCharacterByName(@RequestParam String name) {
-        return repo.findAll().stream().filter(c->c.name().equals(name)).collect(Collectors.toList());
-    }
+//    @GetMapping("/search")
+//    public List<AsterixCharacter> getAsterixCharacterByName(@RequestParam String name) {
+//        return repo.findAll().stream().filter(c->c.name().equals(name)).collect(Collectors.toList());
+//    }
 
     @PostMapping
     public AsterixCharacter addAsterixCharacter(@RequestBody AsterixCharacter character) {
         repo.save(character);
         return character;
+    }
+
+    @PostMapping("/bulk")
+    public List<AsterixCharacter> addAsterixCharacters(@RequestBody List<AsterixCharacter> characters) {
+        repo.saveAll(characters);
+        return characters;
     }
 
     @PutMapping("/{id}")
