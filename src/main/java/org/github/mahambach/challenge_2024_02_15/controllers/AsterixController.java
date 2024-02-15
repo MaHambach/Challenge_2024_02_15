@@ -6,6 +6,7 @@ import org.github.mahambach.challenge_2024_02_15.AsterixRepo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/asterix/characters")
@@ -15,6 +16,10 @@ public class AsterixController {
     @GetMapping
     public List<AsterixCharacter> getAsterix() {
         return repo.findAll();
+    }
+    @GetMapping("/search")
+    public List<AsterixCharacter> getAsterixCharacterByName(@RequestParam String name) {
+        return repo.findAll().stream().filter(c->c.name().equals(name)).collect(Collectors.toList());
     }
 
     @PostMapping
