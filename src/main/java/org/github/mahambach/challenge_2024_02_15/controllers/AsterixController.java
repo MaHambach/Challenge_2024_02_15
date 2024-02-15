@@ -40,4 +40,34 @@ public class AsterixController {
         repo.deleteById(id);
         return "Character with id " + id + " was removed.";
     }
+
+    @GetMapping("/search")
+    public List<AsterixCharacter> searchAsterixCharacters(@RequestParam(required = false) String id,
+                                                          @RequestParam(required = false) String name,
+                                                          @RequestParam(required = false) String occupation,
+                                                          @RequestParam(required = false) int age){
+        return this.repo.findAll()
+                .stream()
+                .filter(character -> character.id().equals(id) ||
+                        character.name().equals(name) ||
+                        character.occupation().equals(occupation) ||
+                        character.age() == age)
+                .toList();
+    }
+
+    @GetMapping("/search/partial")
+    public List<AsterixCharacter> partialSearchAsterixCharacters(@RequestParam(required = false) String id,
+                                                        @RequestParam(required = false) String name,
+                                                        @RequestParam(required = false) String occupation){
+        String searchId = id == null ? "" : id;
+        String searchName = name == null ? "" : name;
+        String searchText = occupation == null ? "" : occupation;
+
+        return this.repo.findAll()
+                .stream()
+                .filter(character -> character.id().contains(searchId) &&
+                        character.name().contains(searchName)&&
+                        character.occupation().contains(searchText))
+                .toList();
+    }
 }
