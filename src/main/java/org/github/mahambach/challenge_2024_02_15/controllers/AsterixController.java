@@ -70,4 +70,9 @@ public class AsterixController {
                         character.occupation().contains(searchText))
                 .toList();
     }
+
+    @GetMapping("/average_age")
+    public double averageAge() {
+        return repo.findAll().stream().mapToInt(AsterixCharacter::age).average().orElse(0);
+    }
 }
