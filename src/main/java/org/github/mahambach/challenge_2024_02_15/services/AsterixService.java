@@ -59,13 +59,21 @@ public class AsterixService {
     }
 
     public List<AsterixCharacter> partialSearchAsterixCharacters(String id, String name, String occupation, String age){
-        return this.asterixRepo.findAll()
-                .stream()
-                .filter(character -> character.id().contains(id) &&
-                        character.name().contains(name)&&
-                        character.occupation().contains(occupation) &&
-                        String.valueOf(character.age()).contains(age))
-                .toList();
+        Stream<AsterixCharacter> characters = this.asterixRepo.findAll().stream();
+
+        if(id != null) {
+            characters = characters.filter(character -> character.id().contains(id));
+        }
+        if(name != null) {
+            characters = characters.filter(character -> character.name().contains(name));
+        }
+        if(occupation != null) {
+            characters = characters.filter(character -> character.occupation().contains(occupation));
+        }
+        if(age != null) {
+            characters = characters.filter(character -> String.valueOf(character.age()).contains(age));
+        }
+        return characters.toList();
     }
 
     public double averageAge() {
