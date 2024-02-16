@@ -21,18 +21,18 @@ public class AsterixService {
     }
 
     public AsterixCharacter addAsterixCharacter(AsterixCharacterNoIdDTO characterNoIdDTO) {
-        return asterixRepo.save(new AsterixCharacter(idService.generateId(), characterNoIdDTO.name(), Integer.parseInt(characterNoIdDTO.age()), characterNoIdDTO.occupation()));
+        return asterixRepo.save(new AsterixCharacter(idService.generateId(), characterNoIdDTO.name(), characterNoIdDTO.age(), characterNoIdDTO.occupation()));
     }
 
 
     public List<AsterixCharacter> addAsterixCharacters(List<AsterixCharacterNoIdDTO> charactersNoIdDTO) {
         return asterixRepo.saveAll(charactersNoIdDTO.stream()
-                .map(characterNoIdDTO -> new AsterixCharacter(idService.generateId(), characterNoIdDTO.name(), Integer.parseInt(characterNoIdDTO.age()), characterNoIdDTO.occupation()))
+                .map(characterNoIdDTO -> new AsterixCharacter(idService.generateId(), characterNoIdDTO.name(), characterNoIdDTO.age(), characterNoIdDTO.occupation()))
                 .toList());
     }
 
     public AsterixCharacter updateAsterixCharacter(String id, AsterixCharacterNoIdDTO characterNoIdDTO) {
-        return asterixRepo.save(new AsterixCharacter(id, characterNoIdDTO.name(), Integer.parseInt(characterNoIdDTO.age()), characterNoIdDTO.occupation()));
+        return asterixRepo.save(new AsterixCharacter(id, characterNoIdDTO.name(), characterNoIdDTO.age(), characterNoIdDTO.occupation()));
     }
 
     public String deleteById(String id) {
