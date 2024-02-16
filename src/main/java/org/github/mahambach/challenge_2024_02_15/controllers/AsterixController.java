@@ -29,8 +29,8 @@ public class AsterixController {
     }
 
     @PutMapping("/{id}")
-    public AsterixCharacter updateAsterixCharacter(@PathVariable String id, @RequestBody AsterixCharacter character) {
-        return asterixService.updateAsterixCharacter(id, character);
+    public AsterixCharacter updateAsterixCharacter(@PathVariable String id, @RequestBody AsterixCharacterNoIdDTO characterNoIdDTO) {
+        return asterixService.updateAsterixCharacter(id, characterNoIdDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -44,6 +44,11 @@ public class AsterixController {
                                                           @RequestParam(required = false) String occupation,
                                                           @RequestParam(required = false) String age){
         return this.asterixService.searchAsterixCharacters(id, name, occupation, age);
+    }
+
+    @GetMapping("/search/{age}")
+    public List<AsterixCharacter> searchAsterixCharactersWithMaxAge(@PathVariable String age){
+        return this.asterixService.searchAsterixCharactersWithMaxAge(age);
     }
 
     @GetMapping("/search/partial")

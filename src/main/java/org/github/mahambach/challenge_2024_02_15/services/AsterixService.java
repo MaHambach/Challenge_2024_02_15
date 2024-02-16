@@ -3,10 +3,9 @@ package org.github.mahambach.challenge_2024_02_15.services;
 import lombok.RequiredArgsConstructor;
 import org.github.mahambach.challenge_2024_02_15.data.AsterixCharacter;
 import org.github.mahambach.challenge_2024_02_15.data.dto.AsterixCharacterNoIdDTO;
-import org.github.mahambach.challenge_2024_02_15.idService.IdService;
+import org.github.mahambach.challenge_2024_02_15.idservice.IdService;
 import org.github.mahambach.challenge_2024_02_15.repositories.AsterixRepo;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -15,28 +14,28 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class AsterixService {
     private final AsterixRepo asterixRepo;
-    private final IdService idService = new IdService();
+    private final IdService idService;
 
     public List<AsterixCharacter> findAll() {
         return asterixRepo.findAll();
     }
 
-    public AsterixCharacter addAsterixCharacter(@RequestBody AsterixCharacterNoIdDTO characterNoIdDTO) {
-        return asterixRepo.save(new AsterixCharacter(idService.generateId().toString(), characterNoIdDTO.name(), characterNoIdDTO.age(), characterNoIdDTO.occupation()));
+    public AsterixCharacter addAsterixCharacter(AsterixCharacterNoIdDTO characterNoIdDTO) {
+        return asterixRepo.save(new AsterixCharacter(idService.generateId(), characterNoIdDTO.name(), Integer.parseInt(characterNoIdDTO.age()), characterNoIdDTO.occupation()));
     }
 
 
-    public List<AsterixCharacter> addAsterixCharacters(@RequestBody List<AsterixCharacterNoIdDTO> charactersNoIdDTO) {
+    public List<AsterixCharacter> addAsterixCharacters(List<AsterixCharacterNoIdDTO> charactersNoIdDTO) {
         return asterixRepo.saveAll(charactersNoIdDTO.stream()
-                .map(characterNoIdDTO -> new AsterixCharacter(idService.generateId().toString(), characterNoIdDTO.name(), characterNoIdDTO.age(), characterNoIdDTO.occupation()))
+                .map(characterNoIdDTO -> new AsterixCharacter(idService.generateId(), characterNoIdDTO.name(), Integer.parseInt(characterNoIdDTO.age()), characterNoIdDTO.occupation()))
                 .toList());
     }
 
-    public AsterixCharacter updateAsterixCharacter(@PathVariable String id, @RequestBody AsterixCharacter character) {
-        return asterixRepo.save(character.withId(id));
+    public AsterixCharacter updateAsterixCharacter(String id, AsterixCharacterNoIdDTO characterNoIdDTO) {
+        return asterixRepo.save(new AsterixCharacter(id, characterNoIdDTO.name(), Integer.parseInt(characterNoIdDTO.age()), characterNoIdDTO.occupation()));
     }
 
-    public String deleteById(@PathVariable String id) {
+    public String deleteById(String id) {
         asterixRepo.deleteById(id);
         return "Character with id " + id + " was removed.";
     }
@@ -54,7 +53,7 @@ public class AsterixService {
             characters = characters.filter(character -> character.occupation().equalsIgnoreCase(occupation));
         }
         if(age != null) {
-            characters = characters.filter(character -> character.age().equalsIgnoreCase(age));
+            characters = characters.filter(character -> String.valueOf(character.age()).equalsIgnoreCase(age));
         }
         return characters.toList();
     }
@@ -65,13 +64,17 @@ public class AsterixService {
                 .filter(character -> character.id().contains(id) &&
                         character.name().contains(name)&&
                         character.occupation().contains(occupation) &&
-                        character.age().contains(age))
+                        String.valueOf(character.age()).contains(age))
                 .toList();
     }
 
     public double averageAge() {
         return asterixRepo.findAll().stream()
-                .mapToInt(character -> Integer.parseInt(character.age()))
+                .mapToInt(AsterixCharacter::age)
                 .average().orElse(0);
+    }
+
+    public List<AsterixCharacter> searchAsterixCharactersWithMaxAge(String age) {
+        return asterixRepo.findByAgeLessThanEqual(Integer.parseInt(age));
     }
 }
