@@ -15,7 +15,12 @@ public class AsterixController {
     private final AsterixService asterixService;
     @GetMapping
     public List<AsterixCharacter> getAsterix() {
-        return asterixService.findAll();
+        return asterixService.findAllCharacters();
+    }
+
+    @GetMapping("/{id}")
+    public AsterixCharacter getAsterixCharacterById(@PathVariable String id) {
+        return asterixService.findById(id);
     }
 
     @PostMapping
@@ -41,13 +46,13 @@ public class AsterixController {
     @GetMapping("/search")
     public List<AsterixCharacter> searchAsterixCharacters(@RequestParam(required = false) String id,
                                                           @RequestParam(required = false) String name,
-                                                          @RequestParam(required = false) String occupation,
-                                                          @RequestParam(required = false) String age){
+                                                          @RequestParam(required = false) String age,
+                                                          @RequestParam(required = false) String occupation) {
         return this.asterixService.searchAsterixCharacters(id, name, occupation, age);
     }
 
     @GetMapping("/search/{age}")
-    public List<AsterixCharacter> searchAsterixCharactersWithMaxAge(@PathVariable String age){
+    public List<AsterixCharacter> findAsterixCharactersWithMaxAge(@PathVariable String age){
         return this.asterixService.searchAsterixCharactersWithMaxAge(age);
     }
 

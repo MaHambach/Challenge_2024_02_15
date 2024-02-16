@@ -16,7 +16,7 @@ public class AsterixService {
     private final AsterixRepo asterixRepo;
     private final IdService idService;
 
-    public List<AsterixCharacter> findAll() {
+    public List<AsterixCharacter> findAllCharacters() {
         return asterixRepo.findAll();
     }
 
@@ -40,7 +40,7 @@ public class AsterixService {
         return "Character with id " + id + " was removed.";
     }
 
-    public List<AsterixCharacter> searchAsterixCharacters(String id, String name, String occupation, String age){
+    public List<AsterixCharacter> searchAsterixCharacters(String id, String name, String age, String occupation){
         Stream<AsterixCharacter> characters = this.asterixRepo.findAll().stream();
 
         if(id != null) {
@@ -84,5 +84,9 @@ public class AsterixService {
 
     public List<AsterixCharacter> searchAsterixCharactersWithMaxAge(String age) {
         return asterixRepo.findByAgeLessThanEqual(Integer.parseInt(age));
+    }
+
+    public AsterixCharacter findById(String id) {
+        return asterixRepo.findById(id).orElseThrow(null);
     }
 }

@@ -15,6 +15,7 @@
     <description>Challenge_2024_02_15</description>
     <properties>
         <java.version>21</java.version>
+        <powermock.version>2.0.9</powermock.version>
     </properties>
     <dependencies>
         <dependency>
@@ -47,6 +48,18 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -65,5 +78,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
