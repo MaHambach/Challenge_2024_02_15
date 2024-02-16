@@ -1,84 +1,61 @@
 package org.github.mahambach.challenge_2024_02_15.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.github.mahambach.challenge_2024_02_15.AsterixCharacter;
-import org.github.mahambach.challenge_2024_02_15.AsterixRepo;
+import org.github.mahambach.challenge_2024_02_15.data.AsterixCharacter;
+import org.github.mahambach.challenge_2024_02_15.data.dto.AsterixCharacterNoIdDTO;
+import org.github.mahambach.challenge_2024_02_15.services.AsterixService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/asterix/characters")
 @RequiredArgsConstructor
 public class AsterixController {
-    private final AsterixRepo repo;
+    private final AsterixService asterixService;
     @GetMapping
     public List<AsterixCharacter> getAsterix() {
-        return repo.findAll();
+        return asterixService.findAll();
     }
-//    @GetMapping("/search")
-//    public List<AsterixCharacter> getAsterixCharacterByName(@RequestParam String name) {
-//        return repo.findAll().stream().filter(c->c.name().equals(name)).collect(Collectors.toList());
-//    }
 
     @PostMapping
-    public AsterixCharacter addAsterixCharacter(@RequestBody AsterixCharacter character) {
-        repo.save(character);
-        return character;
+    public AsterixCharacter addAsterixCharacter(@RequestBody AsterixCharacterNoIdDTO characterNoIdDTO) {
+        return asterixService.addAsterixCharacter(characterNoIdDTO);
     }
 
     @PostMapping("/bulk")
-    public List<AsterixCharacter> addAsterixCharacters(@RequestBody List<AsterixCharacter> characters) {
-        repo.saveAll(characters);
-        return characters;
+    public List<AsterixCharacter> addAsterixCharacters(@RequestBody List<AsterixCharacterNoIdDTO> charactersNoIdDTO) {
+        return asterixService.addAsterixCharacters(charactersNoIdDTO);
     }
 
     @PutMapping("/{id}")
     public AsterixCharacter updateAsterixCharacter(@PathVariable String id, @RequestBody AsterixCharacter character) {
-        character = character.withId(id);
-        repo.save(character);
-        return character;
+        return asterixService.updateAsterixCharacter(id, character);
     }
 
     @DeleteMapping("/{id}")
     public String deleteAsterixCharacter(@PathVariable String id) {
-        repo.deleteById(id);
-        return "Character with id " + id + " was removed.";
+        return this.asterixService.deleteById(id);
     }
 
     @GetMapping("/search")
     public List<AsterixCharacter> searchAsterixCharacters(@RequestParam(required = false) String id,
                                                           @RequestParam(required = false) String name,
                                                           @RequestParam(required = false) String occupation,
-                                                          @RequestParam(required = false) int age){
-        return this.repo.findAll()
-                .stream()
-                .filter(character -> character.id().equals(id) ||
-                        character.name().equals(name) ||
-                        character.occupation().equals(occupation) ||
-                        character.age() == age)
-                .toList();
+                                                          @RequestParam(required = false) String age){
+        return this.asterixService.searchAsterixCharacters(id, name, occupation, age);
     }
 
     @GetMapping("/search/partial")
     public List<AsterixCharacter> partialSearchAsterixCharacters(@RequestParam(required = false) String id,
-                                                        @RequestParam(required = false) String name,
-                                                        @RequestParam(required = false) String occupation){
-        String searchId = id == null ? "" : id;
-        String searchName = name == null ? "" : name;
-        String searchText = occupation == null ? "" : occupation;
-
-        return this.repo.findAll()
-                .stream()
-                .filter(character -> character.id().contains(searchId) &&
-                        character.name().contains(searchName)&&
-                        character.occupation().contains(searchText))
-                .toList();
+                                                                 @RequestParam(required = false) String name,
+                                                                 @RequestParam(required = false) String occupation,
+                                                                 @RequestParam(required = false) String age){
+        return this.asterixService.partialSearchAsterixCharacters(id, name, occupation, age);
     }
 
     @GetMapping("/average_age")
     public double averageAge() {
-        return repo.findAll().stream().mapToInt(AsterixCharacter::age).average().orElse(0);
+        return asterixService.averageAge();
     }
 }
